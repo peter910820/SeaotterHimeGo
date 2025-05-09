@@ -11,6 +11,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/line/line-bot-sdk-go/v8/linebot/messaging_api"
 	"github.com/line/line-bot-sdk-go/v8/linebot/webhook"
+
+	"SeaotterHimeGo/cmds"
 )
 
 func init() {
@@ -59,21 +61,7 @@ func main() {
 			case webhook.MessageEvent:
 				switch message := e.Message.(type) {
 				case webhook.TextMessageContent:
-					_, err = bot.ReplyMessage(
-						&messaging_api.ReplyMessageRequest{
-							ReplyToken: e.ReplyToken,
-							Messages: []messaging_api.MessageInterface{
-								messaging_api.TextMessage{
-									Text: message.Text,
-								},
-							},
-						},
-					)
-					if err != nil {
-						logrus.Error(err)
-					} else {
-						logrus.Info(message.Text)
-					}
+					go cmds.TextMessageEntryPoint(bot, e, message)
 				}
 			}
 		}
