@@ -41,7 +41,7 @@ func main() {
 		// convert *fiber.Ctx to *http.Request
 		req, err := adaptor.ConvertRequest(c, false)
 		if err != nil {
-			logrus.Printf("translate failed: %s", err)
+			logrus.Errorf("translate failed: %s", err)
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
 
@@ -54,11 +54,12 @@ func main() {
 		}
 
 		for _, event := range events.Events {
+			// 事件類型
 			switch e := event.(type) {
 			case webhook.MessageEvent:
 				switch message := e.Message.(type) {
 				case webhook.TextMessageContent:
-					if _, err = bot.ReplyMessage(
+					_, err = bot.ReplyMessage(
 						&messaging_api.ReplyMessageRequest{
 							ReplyToken: e.ReplyToken,
 							Messages: []messaging_api.MessageInterface{
@@ -67,10 +68,11 @@ func main() {
 								},
 							},
 						},
-					); err != nil {
+					)
+					if err != nil {
 						logrus.Error(err)
 					} else {
-						logrus.Error("Sent text reply.")
+						logrus.Info(message.Text)
 					}
 				}
 			}
