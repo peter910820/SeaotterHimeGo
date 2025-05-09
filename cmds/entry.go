@@ -53,7 +53,10 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 		})
 	}
 
-	if strings.Contains(strings.ToLower(message.Text), "ciallo～(∠・ω< )") || strings.Contains(strings.ToLower(message.Text), "ciallo") || strings.Contains(strings.ToLower(message.Text), "(∠・ω< )") {
+	if strings.Contains(strings.ToLower(message.Text), "ciallo～(∠・ω< )") ||
+		strings.Contains(strings.ToLower(message.Text), "ciallo") ||
+		strings.Contains(strings.ToLower(message.Text), "(∠・ω< )") ||
+		strings.Contains(strings.ToLower(message.Text), "洽囉") {
 		messages = append(messages, messaging_api.TextMessage{
 			Text: "Ciallo～(∠・ω< )",
 		})
