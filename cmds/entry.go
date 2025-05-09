@@ -53,6 +53,12 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 		})
 	}
 
+	if strings.Contains(strings.ToLower(message.Text), "ciallo～(∠・ω< )") || strings.Contains(strings.ToLower(message.Text), "ciallo") || strings.Contains(strings.ToLower(message.Text), "(∠・ω< )") {
+		messages = append(messages, messaging_api.TextMessage{
+			Text: fmt.Sprintf("https://nhentai.net/g/" + message.Text[1:]),
+		})
+	}
+
 	if len(messages) != 0 {
 		_, err := bot.ReplyMessage(
 			&messaging_api.ReplyMessageRequest{
