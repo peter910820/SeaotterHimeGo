@@ -39,10 +39,10 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 		})
 	}
 
-	if strings.Contains(strings.ToLower(message.Text), "運勢") {
+	if strings.Contains(strings.ToLower(message.Text), "運勢") || strings.ContainsAny(strings.ToLower(message.Text), "運勢") {
 		randomfortune := fortunate()
 		messages = append(messages, messaging_api.TextMessage{
-			Text: fmt.Sprintf("您今天的運勢: %s", randomfortune),
+			Text: fmt.Sprintf("💫您今天的運勢: %s💫", randomfortune),
 		})
 	}
 
@@ -53,15 +53,20 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 		})
 	}
 
-	_, err := bot.ReplyMessage(
-		&messaging_api.ReplyMessageRequest{
-			ReplyToken: e.ReplyToken,
-			Messages:   messages,
-		},
-	)
-	if err != nil {
-		logrus.Error(err)
+	if len(messages) != 0 {
+		_, err := bot.ReplyMessage(
+			&messaging_api.ReplyMessageRequest{
+				ReplyToken: e.ReplyToken,
+				Messages:   messages,
+			},
+		)
+		if err != nil {
+			logrus.Error(err)
+		} else {
+			logrus.Info(fmt.Sprintf("使用者說: %s", message.Text))
+		}
 	} else {
 		logrus.Info(fmt.Sprintf("使用者說: %s", message.Text))
 	}
+
 }
