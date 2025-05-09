@@ -13,6 +13,8 @@ import (
 func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.MessageEvent, message webhook.TextMessageContent) {
 	var messages []messaging_api.MessageInterface
 
+	message.Text = strings.TrimSpace(message.Text)
+
 	if message.Text == "/test" {
 		messages = append(messages, messaging_api.TextMessage{
 			Text: "✅messaging_api 測試成功",
@@ -60,6 +62,6 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 	if err != nil {
 		logrus.Error(err)
 	} else {
-		logrus.Info(message.Text)
+		logrus.Info(fmt.Sprintf("使用者說: %s", message.Text))
 	}
 }
