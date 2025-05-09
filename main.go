@@ -55,19 +55,22 @@ func main() {
 
 		for _, event := range events.Events {
 			switch e := event.(type) {
-			case *webhook.MessageEvent:
+			case webhook.MessageEvent:
 				switch message := e.Message.(type) {
-				case *webhook.TextMessageContent:
-					_, err := bot.ReplyMessage(&messaging_api.ReplyMessageRequest{
-						ReplyToken: e.ReplyToken,
-						Messages: []messaging_api.MessageInterface{
-							&messaging_api.TextMessage{
-								Text: message.Text,
+				case webhook.TextMessageContent:
+					if _, err = bot.ReplyMessage(
+						&messaging_api.ReplyMessageRequest{
+							ReplyToken: e.ReplyToken,
+							Messages: []messaging_api.MessageInterface{
+								messaging_api.TextMessage{
+									Text: message.Text,
+								},
 							},
 						},
-					})
-					if err != nil {
-						logrus.Printf("reply message failed: %s", err)
+					); err != nil {
+						logrus.Error(err)
+					} else {
+						logrus.Error("Sent text reply.")
 					}
 				}
 			}
