@@ -7,14 +7,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func wancgCheck(no string) (string, error) {
+func wnacgCheck(no string) (string, error) {
 	var retrunString string
-	url := fmt.Sprintf("https://www.wnacg.org/photos-index-aid-%s.html", no)
+	url := fmt.Sprintf("https://www.wnacg.com/photos-index-aid-%s.html", no)
 	userAgent := "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		logrus.Errorf("wancg功能發生錯誤: %s", err)
+		logrus.Errorf("wnacg功能發生錯誤: %s", err)
 		return "", err
 	}
 	req.Header.Set("User-Agent", userAgent)
@@ -22,7 +22,7 @@ func wancgCheck(no string) (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		logrus.Errorf("wancg功能發生錯誤: %s", err)
+		logrus.Errorf("wnacg功能發生錯誤: %s", err)
 		return "", err
 	}
 	defer resp.Body.Close()

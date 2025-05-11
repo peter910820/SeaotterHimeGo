@@ -55,9 +55,9 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 
 	reW := regexp.MustCompile(`(?i)^w\d{1,5}$`)
 	if reW.MatchString(message.Text) {
-		returnString, err := wancgCheck(message.Text[1:])
+		returnString, err := wnacgCheck(message.Text[1:])
 		if err != nil {
-			logrus.Error(fmt.Sprintf("wancg功能發生錯誤: %s", err))
+			logrus.Error(fmt.Sprintf("wnacg功能發生錯誤: %s", err))
 		}
 		messages = append(messages, messaging_api.TextMessage{
 			Text: returnString,
