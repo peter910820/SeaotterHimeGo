@@ -53,6 +53,17 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 		})
 	}
 
+	reW := regexp.MustCompile(`(?i)^w\d{1,5}$`)
+	if reW.MatchString(message.Text) {
+		returnString, err := wancgCheck(message.Text[1:])
+		if err != nil {
+			logrus.Error(fmt.Sprintf("wancg功能發生錯誤: %s", err))
+		}
+		messages = append(messages, messaging_api.TextMessage{
+			Text: returnString,
+		})
+	}
+
 	if strings.Contains(strings.ToLower(message.Text), "ciallo～(∠・ω< )") ||
 		strings.Contains(strings.ToLower(message.Text), "ciallo") ||
 		strings.Contains(strings.ToLower(message.Text), "(∠・ω< )") ||
