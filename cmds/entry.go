@@ -57,6 +57,7 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 	if reW.MatchString(message.Text) {
 		returnString, err := wnacgCheck(message.Text[1:])
 		if err != nil {
+			logrus.Errorf("wnacg功能發生錯誤: %s", err)
 			logrus.Error(fmt.Sprintf("wnacg功能發生錯誤: %s", err))
 		}
 		messages = append(messages, messaging_api.TextMessage{

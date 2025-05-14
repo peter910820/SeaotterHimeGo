@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/antchfx/htmlquery"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,7 +16,6 @@ func wnacgCheck(no string) (string, error) {
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		logrus.Errorf("wnacg功能發生錯誤: %s", err)
 		return "", err
 	}
 	req.Header.Set("User-Agent", userAgent)
@@ -22,15 +23,25 @@ func wnacgCheck(no string) (string, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		logrus.Errorf("wnacg功能發生錯誤: %s", err)
 		return "", err
 	}
 	defer resp.Body.Close()
 
+	doc, err := htmlquery.Parse(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
 	switch resp.StatusCode {
 	case http.StatusOK:
-		logrus.Info(fmt.Sprintf("指定本子(%s)確認成功", no))
-		retrunString = url
+		h2Node := htmlquery.FindOne(doc, "//h2")
+		if h2Node != nil {
+			logrus.Info(fmt.Sprintf("指定本子(%s)確認成功", no))
+			retrunString = url
+		} else {
+			logrus.Errorf(fmt.Sprintf("找不到指定本子(%s)", no))
+			retrunString = fmt.Sprintf("找不到指定本子(%s)", no)
+		}
 	case http.StatusNotFound:
 		logrus.Errorf(fmt.Sprintf("找不到指定本子(%s)", no))
 		retrunString = fmt.Sprintf("找不到指定本子(%s)", no)
