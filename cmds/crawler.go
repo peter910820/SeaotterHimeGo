@@ -87,8 +87,8 @@ func bingSearch(queryText string) (string, error) {
 		}
 		logrus.Debug(retrunString)
 	default:
-		logrus.Errorf("伺服器端錯誤,請聯繫管理員")
-		retrunString = "伺服器端錯誤,請聯繫管理員"
+		logrus.Errorf(fmt.Sprintf("伺服器端錯誤(%d)", resp.StatusCode))
+		retrunString = fmt.Sprintf("伺服器端錯誤(%d)", resp.StatusCode)
 	}
 
 	return retrunString, nil
