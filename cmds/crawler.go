@@ -73,17 +73,24 @@ func bingSearch(queryText string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	switch resp.StatusCode {
+	case http.StatusOK:
+		nodes, err := htmlquery.QueryAll(doc, "//h2//a")
+		if err != nil {
+			return "", err
+		}
 
-	nodes, err := htmlquery.QueryAll(doc, "//h2//a")
-	if err != nil {
-		return "", err
+		for _, node := range nodes {
+			text := htmlquery.InnerText(node)
+			link := htmlquery.SelectAttr(node, "href")
+			retrunString += fmt.Sprintf("%s ➡️ %s\n", text, link)
+		}
+		logrus.Debug(retrunString)
+	default:
+		logrus.Errorf("伺服器端錯誤,請聯繫管理員")
+		retrunString = "伺服器端錯誤,請聯繫管理員"
 	}
 
-	for _, node := range nodes {
-		text := htmlquery.InnerText(node)
-		link := htmlquery.SelectAttr(node, "href")
-
-		retrunString += fmt.Sprintf("%s ➡️ %s\n", text, link)
-	}
 	return retrunString, nil
+
 }
