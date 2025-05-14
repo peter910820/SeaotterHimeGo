@@ -21,6 +21,12 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 		})
 	}
 
+	if message.Text == "/抽" || message.Text == "/抽籤" {
+		messages = append(messages, messaging_api.TextMessage{
+			Text: fmt.Sprintf("您抽到的數字為: %s", draw()),
+		})
+	}
+
 	if strings.Contains(message.Text, "查") {
 		messages = append(messages, messaging_api.TextMessage{
 			Text: "以下是查分器連結 請妥善使用～\nhttps://redive.estertion.win/arcaea/probe/",
