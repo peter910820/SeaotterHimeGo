@@ -51,3 +51,39 @@ func wnacgCheck(no string) (string, error) {
 	}
 	return retrunString, nil
 }
+
+func bingSearch(queryText string) (string, error) {
+	var retrunString string
+	url := fmt.Sprintf("https://www.bing.com/search?q=%s", queryText)
+	userAgent := "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("User-Agent", userAgent)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	doc, err := htmlquery.Parse(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	nodes, err := htmlquery.QueryAll(doc, "//h2//a")
+	if err != nil {
+		return "", err
+	}
+
+	for _, node := range nodes {
+		text := htmlquery.InnerText(node)
+		link := htmlquery.SelectAttr(node, "href")
+
+		retrunString += fmt.Sprintf("%s ➡️ %s\n", text, link)
+	}
+	return retrunString, nil
+}

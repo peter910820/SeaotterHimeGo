@@ -10,6 +10,12 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+var (
+	reBing    *regexp.Regexp = regexp.MustCompile(`(?i)^\/bing-[\w/:.\p{Han}]{1,20}$`)
+	reWnacg   *regexp.Regexp = regexp.MustCompile(`(?i)^w\d{1,5}$`)
+	reNhentai *regexp.Regexp = regexp.MustCompile(`(?i)^n\d{1,6}$`)
+)
+
 func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.MessageEvent, message webhook.TextMessageContent) {
 	var messages []messaging_api.MessageInterface
 
@@ -25,6 +31,18 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 		messages = append(messages, messaging_api.TextMessage{
 			Text: fmt.Sprintf("您抽到的數字為: %s", draw()),
 		})
+	}
+
+	if reBing.MatchString(message.Text) {
+		retrunString, err := bingSearch(message.Text[8:])
+		if err != nil {
+			logrus.Errorf("bing搜尋功能發生錯誤: %s", err)
+			logrus.Error(fmt.Sprintf("bing搜尋功能發生錯誤: %s", err))
+		} else {
+			messages = append(messages, messaging_api.TextMessage{
+				Text: retrunString,
+			})
+		}
 	}
 
 	if strings.Contains(message.Text, "查") {
@@ -46,21 +64,18 @@ func TextMessageEntryPoint(bot *messaging_api.MessagingApiAPI, e webhook.Message
 	}
 
 	if strings.Contains(strings.ToLower(message.Text), "運勢") || strings.ContainsAny(strings.ToLower(message.Text), "運勢") {
-		randomfortune := fortunate()
 		messages = append(messages, messaging_api.TextMessage{
-			Text: fmt.Sprintf("💫您今天的運勢: %s💫", randomfortune),
+			Text: fmt.Sprintf("💫您今天的運勢: %s💫", fortunate()),
 		})
 	}
 
-	reN := regexp.MustCompile(`(?i)^n\d{1,6}$`)
-	if reN.MatchString(message.Text) {
+	if reNhentai.MatchString(message.Text) {
 		messages = append(messages, messaging_api.TextMessage{
 			Text: fmt.Sprintf("https://nhentai.net/g/" + message.Text[1:]),
 		})
 	}
 
-	reW := regexp.MustCompile(`(?i)^w\d{1,5}$`)
-	if reW.MatchString(message.Text) {
+	if reWnacg.MatchString(message.Text) {
 		returnString, err := wnacgCheck(message.Text[1:])
 		if err != nil {
 			logrus.Errorf("wnacg功能發生錯誤: %s", err)
