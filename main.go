@@ -39,6 +39,11 @@ func main() {
 	}
 
 	app := fiber.New()
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.SendStatus(fiber.StatusOK)
+	})
+
 	app.Post("/callback", func(c *fiber.Ctx) error {
 		// convert *fiber.Ctx to *http.Request
 		req, err := adaptor.ConvertRequest(c, false)
