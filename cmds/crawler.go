@@ -56,11 +56,15 @@ func bingSearch(queryText string) (string, error) {
 	var retrunString string
 	url := fmt.Sprintf("https://www.bing.com/search?q=%s", queryText)
 	userAgent := "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36"
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", err
 	}
 	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+	req.Header.Set("Accept-Language", "zh-TW,zh;q=0.9")
+	req.Header.Set("Referer", "https://www.bing.com/")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
